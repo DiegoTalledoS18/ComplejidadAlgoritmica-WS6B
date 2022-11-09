@@ -192,15 +192,21 @@ password_icon_label.place(x=550, y=196)
 # ============================Calculate button================================
 
 def sendCalculateButton():
-    firstIATA = initialIATA.get()
-    secondIATA = finalIATA.get()
+    firstIATA = initialIATA.get().upper()
+    secondIATA = finalIATA.get().upper()
 
 
     if len(firstIATA) == 0 or len(secondIATA) == 0:
-        print("No Entre")
-        return messagebox.showinfo('Error', 'Campos Incompletos')
+        temporaryRight=True
+        temporaryLeft=True
+        if len(firstIATA)== 0:
+            temporaryLeft= False
+        if len(secondIATA)== 0:
+            temporaryRight= False
+
+        showStatusIcons(temporaryLeft,temporaryRight)
     else:
-        print("Entre")
+        showStatusIcons(True, True)
         lista = read_file(path_file)
 
         valor_ini = diccionario[str(firstIATA)]
@@ -231,32 +237,36 @@ label.place(x=30, y=380, width=900, height=30)
 
 # ========= Validate IATA ==================================================================
 
-def Correct():
-    hide_button = Button(lgn_frame, image=hide_image, command=Incorrect, relief=FLAT, activebackground="white",
-                         borderwidth=0, background="white", cursor="hand2")
-    hide_button.place(x=820, y=196)
-    finalIATA.config(show='')
+def showStatusIcons(first, end):
+    invalidText="Campo incompleto"
+    print(first, end)
+    if first:
+        firstButton = Button(lgn_frame, image=valid, relief=FLAT, activebackground="white",borderwidth=0, background="white", cursor="hand2")
+        firstButton.place(x=370, y=196)
+        InvalidlabelFirst = Label(lgn_frame, text=invalidText, font=('yu gothic ui', 9), bg="#ffffff", fg='white', bd=0, relief=FLAT)
+        InvalidlabelFirst.place(x=100, y=231)
+    if not first:
+        firstButton = Button(lgn_frame, image=invalid, relief=FLAT, activebackground="white",borderwidth=0, background="white", cursor="hand2")
+        firstButton.place(x=370, y=196)
+        InvalidlabelFirst = Label(lgn_frame, text=invalidText, font=('yu gothic ui', 9), bg="#ffffff", fg='red', bd=0, relief=FLAT)
+        InvalidlabelFirst.place(x=100, y=231)
+    if end:
+        endButton = Button(lgn_frame, image=valid, relief=FLAT, activebackground="white",borderwidth=0, background="white", cursor="hand2")
+        endButton.place(x=820, y=196)
+        InvalidlabelEnd = Label(lgn_frame, text=invalidText, font=('yu gothic ui', 9), bg="#ffffff", fg='white', bd=0, relief=FLAT)
+        InvalidlabelEnd.place(x=550, y=231)
+    if not end:
+        endButton = Button(lgn_frame, image=invalid, relief=FLAT, activebackground="white",borderwidth=0, background="white", cursor="hand2")
+        endButton.place(x=820, y=196)
+        InvalidlabelEnd = Label(lgn_frame, text=invalidText, font=('yu gothic ui', 9), bg="#ffffff", fg='red', bd=0, relief=FLAT)
+        InvalidlabelEnd.place(x=550, y=231)
 
 
-def Incorrect():
-    show_button = Button(lgn_frame, image=show_image, command=Correct, relief=FLAT, activebackground="white",
-                         borderwidth=0, background="white", cursor="hand2")
-    show_button.place(x=820, y=196)
-    finalIATA.config(show='')
-
-
-show_image = ImageTk.PhotoImage \
+valid = ImageTk.PhotoImage \
     (file='images\\valid.png')
 
-hide_image = ImageTk.PhotoImage \
+invalid = ImageTk.PhotoImage \
     (file='images\\invalid.png')
 
-show_button = Button(lgn_frame, image=show_image, command=Correct, relief=FLAT, activebackground="white", borderwidth=0,
-                     background="white", cursor="hand2")
-show_button.place(x=820, y=196)
-
-show_button = Button(lgn_frame, image=show_image, command=Correct, relief=FLAT, activebackground="white", borderwidth=0,
-                     background="white", cursor="hand2")
-show_button.place(x=370, y=196)
 
 window.mainloop()

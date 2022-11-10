@@ -127,7 +127,7 @@ window = Tk()
 window = window
 window.geometry('1366x718')
 window.resizable(0, 0)
-window.title('Fastest route by plane V2')
+window.title('Calculadora de Ruta')
 
 # ============================background image============================
 bg_frame = Image.open('images\\background1.png')
@@ -146,47 +146,47 @@ heading = Label(lgn_frame, text=txt, font=('yu gothic ui', 25, "bold"), bg="#fff
 heading.place(x=10, y=30, width=900, height=30)
 
 # ============ Eliga su destino =============================================
-sign_in_label = Label(lgn_frame, text="Eliga su destino", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 17, "bold"))
-sign_in_label.place(x=380, y=93)
+label = Label(lgn_frame, text="Eliga su destino", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 17, "bold"))
+label.place(x=380, y=93)
 
 # ============================INICIO====================================
-username_label = Label(lgn_frame, text="IATA INICIO", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 13, "bold"))
-username_label.place(x=100, y=160)
+F_IATA_label = Label(lgn_frame, text="IATA INICIO", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 13, "bold"))
+F_IATA_label.place(x=100, y=160)
 
 initialIATA = Entry(lgn_frame, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
                        font=("yu gothic ui ", 12, "bold"))
 initialIATA.place(x=130, y=198, width=230)
 
-password_line = Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
-password_line.place(x=100, y=223)
+F_line = Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
+F_line.place(x=100, y=223)
 
-username_line = Canvas(lgn_frame, width=300, height=2.0, bg="#ffffff", highlightthickness=0)
-username_line.place(x=100, y=355)
+I_line = Canvas(lgn_frame, width=300, height=2.0, bg="#ffffff", highlightthickness=0)
+I_line.place(x=100, y=355)
 
 # ===== airport icon inicial =========
-username_icon = Image.open('images\\initial_icon.png')
-photo = ImageTk.PhotoImage(username_icon)
-username_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
-username_icon_label.image = photo
-username_icon_label.place(x=100, y=196)
+L_icon = Image.open('images\\initial_icon.png')
+photo = ImageTk.PhotoImage(L_icon)
+I_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
+label.image = photo
+I_icon_label.place(x=100, y=196)
 
 # ============================FINAL====================================
-password_label = Label(lgn_frame, text="IATA FINAL", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 13, "bold"))
-password_label.place(x=550, y=160)
+E_IATA_label = Label(lgn_frame, text="IATA FINAL", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 13, "bold"))
+E_IATA_label.place(x=550, y=160)
 
 finalIATA = Entry(lgn_frame, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
                        font=("yu gothic ui", 12, "bold"))
 finalIATA.place(x=580, y=198, width=230)
 
-password_line = Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
-password_line.place(x=550, y=223)
+F_line = Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
+F_line.place(x=550, y=223)
 
 # ======== airport icon FINAL ================
-password_icon = Image.open('images\\end_icon.png')
-photo = ImageTk.PhotoImage(password_icon)
-password_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
-password_icon_label.image = photo
-password_icon_label.place(x=550, y=196)
+R_icon = Image.open('images\\end_icon.png')
+photo = ImageTk.PhotoImage(R_icon)
+F_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
+F_icon_label.image = photo
+F_icon_label.place(x=550, y=196)
 
 
 # ============================Calculate button================================
@@ -216,32 +216,46 @@ def sendCalculateButton():
 
         ruta_final = escala(valor_ini, valor_fin, path)
 
-        result.set("Ruta: " + str(ruta_final))
+        showDisplayableRute(ruta_final,secondIATA)
         ruta.clear()
 
+def showDisplayableRute(ruta_final_p,destination_airport):
+    rutespath=[]
+    for i in ruta_final_p:
+        rutespath.append(i)
+    rutespath.reverse()
+    routesresut="Ruta: "
+    for i in rutespath:
+        routesresut=routesresut+" "+i+" "
+    routesresut=routesresut+" "+ destination_airport
+    showAirplane(routesresut)
+    return routesresut
+def showAirplane(routesresut_p):
+
+    escala_frame = Image.open('images\\airplane.png')
+    photo = ImageTk.PhotoImage(escala_frame)
+    airplane_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
+    airplane_icon_label.image = photo
+    airplane_icon_label.place(x=550, y=380)
+    label = Label(lgn_frame, text=routesresut_p, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
+    label.place(x=300, y=380)
 
 
-lgn_button = Image.open('images\\btn1.png')
-photo = ImageTk.PhotoImage(lgn_button)
-lgn_button_label = Label(lgn_frame, image=photo, bg='#ffffff')
-lgn_button_label.image = photo
-lgn_button_label.place(x=330, y=270)
-login = Button(lgn_button_label, text='CALCULAR', command=sendCalculateButton, font=("yu gothic ui", 13, "bold"), width=27, bd=0,
+_button = Image.open('images\\btn1.png')
+photo = ImageTk.PhotoImage(_button)
+_button_label = Label(lgn_frame, image=photo, bg='#ffffff')
+_button_label.image = photo
+_button_label.place(x=330, y=270)
+calc_Button = Button(_button_label, text='CALCULAR', command=sendCalculateButton, font=("yu gothic ui", 13, "bold"), width=27, bd=0,
                bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
-login.place(x=10, y=10)
+calc_Button.place(x=10, y=10)
 
-result = StringVar()
-result = StringVar()
-
-label = Label(lgn_frame, textvariable=result, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
-label.place(x=30, y=380, width=900, height=30)
 
 
 # ========= Validate IATA ==================================================================
 
 def showStatusIcons(first, end):
     invalidText="Campo incompleto"
-    print(first, end)
     if first:
         firstButton = Button(lgn_frame, image=valid, relief=FLAT, activebackground="white",borderwidth=0, background="white", cursor="hand2")
         firstButton.place(x=370, y=196)

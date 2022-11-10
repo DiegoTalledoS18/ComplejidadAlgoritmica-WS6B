@@ -217,6 +217,7 @@ def sendCalculateButton():
         ruta_final = escala(valor_ini, valor_fin, path)
 
         result.set("Ruta: " + str(ruta_final))
+        ruta.clear()
 
 
 
@@ -229,6 +230,7 @@ login = Button(lgn_button_label, text='CALCULAR', command=sendCalculateButton, f
                bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
 login.place(x=10, y=10)
 
+result = StringVar()
 result = StringVar()
 
 label = Label(lgn_frame, textvariable=result, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)

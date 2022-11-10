@@ -2,6 +2,9 @@ from tkinter import *
 from tkinter import messagebox
 import graphviz as gv
 from PIL import ImageTk, Image
+import networkx as nx
+import matplotlib.pyplot as plt
+import csv
 
 graph = gv.Digraph("grafo1")
 path_file = "Short.csv"
@@ -13,6 +16,41 @@ ruta = []
 path = []
 
 ladj = [[] for _ in range(21)]
+lista_general = []
+nombre_archivo = "Short.csv"
+with open(nombre_archivo, "r") as archivo:
+    lector = csv.reader(archivo, delimiter=",")
+    for fila in lector:
+        partida_iata = fila[0]
+        destino_iata = fila[1]
+        t_hora = fila[2][0:1]
+        t_min = fila[3][0:1]
+        t_total = int(t_hora) * 60 + int(t_min)
+        lista_general.append([partida_iata, destino_iata, t_total])
+
+def agregar_arista(G, u, v, w=1, di=True):
+    G.add_edge(u, v, weight=w)
+
+    # Si el grafo no es dirigido
+    if not di:
+        # Agrego otra arista en sentido contrario
+        G.add_edge(v, u, weight=w)
+
+def instanciaryañadir(list):
+    G = nx.Graph()
+    for i in range(len(lista_general)):
+        for j in range(len(list)):
+            if (list[j]==lista_general[i][0]) and (lista_general[i][1] in list):
+                agregar_arista(G, lista_general[i][0], lista_general[i][1], lista_general[i][2])
+
+    # Draw the networks
+    pos = nx.layout.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_size=400, node_color="green", font_size=8, font_color="white",width=2, edge_color="black", alpha=0.9)
+    labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=6)
+    plt.title("Grafo de los AITA")
+    plt.show()
+
 
 
 def bfs_al(G, s):
@@ -217,6 +255,9 @@ def sendCalculateButton():
         ruta_final = escala(valor_ini, valor_fin, path)
 
         showDisplayableRute(ruta_final,secondIATA)
+
+        ruta_final.append(secondIATA)
+        instanciaryañadir(ruta_final)
         ruta.clear()
 
 def showDisplayableRute(ruta_final_p,destination_airport):

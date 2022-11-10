@@ -109,58 +109,6 @@ def escala(valor_ini, pos, path):
     return escala(valor_ini, path[pos], path)
 
 
-"""root = Tk()
-root.title("Fastest route by plane")
-
-myFrame = Frame(root, width=100, height=200)
-root.geometry("800x450")
-myFrame.pack()
-
-title = Label(myFrame, text="Calcule la ruta mas rapida entre aeropuertos", bd=1, font=("Helvetica 12"), justify=CENTER,
-              pady=14)
-title.grid(row=0, column=3)
-
-initialIATA = Entry(myFrame)
-initialIATA.grid(row=3, column=1)
-
-finalIATA = Entry(myFrame)
-finalIATA.grid(row=3, column=6)
-
-initialIATALabel = Label(myFrame, text="Origen (IATA) :", pady=20)
-initialIATALabel.grid(row=3, sticky="e", column=0)
-
-finalIATALabel = Label(myFrame, text="Destino (IATA) :")
-finalIATALabel.grid(row=3, sticky="e", column=5)
-
-
-def sendCalculateButton():
-    firstIATA = initialIATA.get()
-    secondIATA = finalIATA.get()
-
-    if len(firstIATA) == 0 or len(secondIATA) == 0:
-        return messagebox.showinfo('Error', 'Campos Incompletos')
-    else:
-        lista = read_file(path_file)
-
-        valor_ini = diccionario[str(firstIATA)]
-        valor_fin = diccionario[str(secondIATA)]
-
-        path = bfs_al(lista, valor_ini)
-
-        ruta_final = escala(valor_ini, valor_fin, path)
-
-        result.set("Ruta: " + str(ruta_final))
-
-sendButton = Button(root, text="Calcular", command=sendCalculateButton)
-sendButton.pack()
-
-result = StringVar()
-
-label = Label(root, textvariable=result)
-label.pack()
-
-root.mainloop()"""
-
 window = Tk()
 window = window
 window.geometry('1366x718')

@@ -123,8 +123,35 @@ bg_panel.image = photo
 bg_panel.pack(fill='both', expand='yes')
 
 # ====== Frame =========================
-lgn_frame = Frame(window, bg='#ffffff', width=950, height=600)
-lgn_frame.place(x=200, y=70)
+lgn_frame = Frame(window, bg='#ffffff', width=1200, height=600)
+lgn_frame.place(x=85, y=70)
+
+
+# ==========FILTERS================
+filter_frame = Image.open('images\\filters.png')
+photo = ImageTk.PhotoImage(filter_frame)
+filter_panel = Label(window, image=photo,bg='#ffffff')
+filter_panel.image = photo
+filter_panel.place(x=970, y=100)
+
+nodeInput = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+nodeInput.place(x=1030, y=264, width=230)
+
+arista1Input = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+arista1Input.place(x=1030, y=434, width=230)
+arista2Input = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+arista2Input.place(x=1030, y=485, width=230)
+
+deleteNode_Button = Button(window, text='ELIMINAR',  font=("yu gothic ui", 13, "bold"), width=21, bd=0,
+               bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
+deleteNode_Button.place(x=1030, y=311)
+
+deleteArista_Button = Button(window, text='ELIMINAR',  font=("yu gothic ui", 13, "bold"), width=21, bd=0,
+               bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
+deleteArista_Button.place(x=1030, y=541)
 
 # ========================================================================
 txt = "CALCULADOR DE RUTA MAS RAPIDA"
@@ -173,6 +200,10 @@ photo = ImageTk.PhotoImage(R_icon)
 F_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
 F_icon_label.image = photo
 F_icon_label.place(x=550, y=196)
+
+
+var1 = IntVar()
+Checkbutton(lgn_frame, text="Filtros", variable=var1,background="#ffffff",font=("yu gothic ui", 12, "bold"),bd="10").place(x=450, y=356)
 
 
 # ============================Calculate button================================

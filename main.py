@@ -202,10 +202,6 @@ F_icon_label.image = photo
 F_icon_label.place(x=550, y=196)
 
 
-var1 = IntVar()
-Checkbutton(lgn_frame, text="Filtros", variable=var1,background="#ffffff",font=("yu gothic ui", 12, "bold"),bd="10").place(x=450, y=356)
-
-
 # ============================Calculate button================================
 
 def sendCalculateButton():

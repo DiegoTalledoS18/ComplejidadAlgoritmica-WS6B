@@ -20,18 +20,19 @@ deleteAristaFilter=False
 ladj = [[] for _ in range(21)]
 
 ruta = []
-
 lista_general = []
-nombre_archivo = "Short.csv"
-with open(nombre_archivo, "r") as archivo:
-    lector = csv.reader(archivo, delimiter=",")
-    for fila in lector:
-        partida_iata = fila[0]
-        destino_iata = fila[1]
-        t_hora = fila[2][0:1]
-        t_min = fila[3][0:1]
-        t_total = int(t_hora) * 60 + int(t_min)
-        lista_general.append([partida_iata, destino_iata, t_total])
+
+def cargar_lista_general():
+  nombre_archivo = "Short.csv"
+  with open(nombre_archivo, "r") as archivo:
+      lector = csv.reader(archivo, delimiter=",")
+      for fila in lector:
+          partida_iata = fila[0]
+          destino_iata = fila[1]
+          t_hora = fila[2][0:1]
+          t_min = fila[3][0:1]
+          t_total = int(t_hora) * 60 + int(t_min)
+          lista_general.append([partida_iata, destino_iata, t_total])
 
 def Dijkstra(graph, start, final):
     n = len(graph)
@@ -194,6 +195,7 @@ def agregar_arista(G, u, v, w=1, di=True):
         G.add_edge(v, u, weight=w)
 
 def instanciaryañadir(list):
+    cargar_lista_general()
     G = nx.Graph()
     for i in range(len(lista_general)):
         for j in range(len(list)):
@@ -202,10 +204,10 @@ def instanciaryañadir(list):
 
     # Draw the networks
     pos = nx.layout.spring_layout(G)
-    nx.draw_networkx(G, pos, with_labels=True, node_size=400, node_color="green", font_size=8, font_color="white",width=2, edge_color="black", alpha=0.9)
+    nx.draw_networkx(G, pos, with_labels=True, node_size=800, node_color="green", font_size=10, font_color="white",width=2, edge_color="black", alpha=0.9)
     labels = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=6)
-    plt.title("Grafo de los AITA")
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=8)
+    plt.title("Grafo de los IATA")
     plt.show()
     return 0
 
@@ -337,7 +339,7 @@ def sendCalculateButton():
         showDisplayableRuteTime(Dijkstra(ladj,valor_ini,valor_fin))
         ruta_final.append(secondIATA)
 
-        #instanciaryañadir(ruta_final)
+        instanciaryañadir(ruta_final)
         ruta.clear()
 
 def showDisplayableRute(ruta_final_p,destination_airport):

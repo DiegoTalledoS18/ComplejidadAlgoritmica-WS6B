@@ -116,11 +116,9 @@ def borrar_arista(balde, origen, destino):
   else:
     for i in range(len(lista) - 1):
       tupla = lista[i]
-      print("for")
       if dest == tupla[0]:
         balde[ori].pop(i)
         #print("Se borro la arista con origen en {} y destino en {}".format(diccionario2[ori], diccionario2[dest]))
-        print("if")
 
 def horasMin(h):
   h = int(h)
@@ -215,7 +213,7 @@ window = Tk()
 window = window
 window.geometry('1366x718')
 window.resizable(0, 0)
-window.title('Calculadora de Ruta')
+window.title('Ruta mas rapida entre aeropuertos')
 
 # ============================background image============================
 bg_frame = Image.open('images\\background1.png')
@@ -249,9 +247,9 @@ arista2Input = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg
 arista2Input.place(x=1030, y=485, width=230)
 
 # ========================================================================
-txt = "CALCULADOR DE RUTA MAS RAPIDA"
+txt = "Ruta mas rapida entre aeropuertos"
 heading = Label(lgn_frame, text=txt, font=('yu gothic ui', 25, "bold"), bg="#ffffff", fg='black', bd=10, relief=FLAT)
-heading.place(x=10, y=30, width=900, height=30)
+heading.place(x=25, y=30, width=900, height=30)
 
 # ============ Eliga su destino =============================================
 label = Label(lgn_frame, text="Eliga su destino", bg="#ffffff", fg="#4f4e4d", font=("yu gothic ui", 17, "bold"))
@@ -359,7 +357,7 @@ def showAirplane(routesresut_p):
     airplane_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
     airplane_icon_label.image = photo
     airplane_icon_label.place(x=600, y=450)
-    label = Label(lgn_frame, text=routesresut_p, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
+    label = Label(lgn_frame, text=routesresut_p, font=('yu gothic ui', 19,"bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
     label.place(x=300, y=380)
 
 
@@ -370,7 +368,7 @@ def showDisplayableRuteTime(totalTime):
     showTimeFormat(timeFormat)
 
 def showTimeFormat(timeFormat):
-    label = Label(lgn_frame, text=timeFormat, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
+    label = Label(lgn_frame, text=timeFormat, font=('yu gothic ui', 19,"bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
     label.place(x=260, y=430)
 
 def deleteAirport(ladj_P):

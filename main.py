@@ -349,9 +349,9 @@ def showDisplayableRute(ruta_final_p,destination_airport):
     rutespath.reverse()
     routesresut="Ruta: "
     for i in rutespath:
-        routesresut=routesresut+" "+i+" "
+        routesresut=routesresut+" "+i+" - "
     routesresut=routesresut+" "+ destination_airport
-    print("-",routesresut)
+    print(routesresut)
     showAirplane(routesresut)
 def showAirplane(routesresut_p):
     escala_frame = Image.open('images\\airplane.png')
@@ -366,12 +366,12 @@ def showAirplane(routesresut_p):
 def showDisplayableRuteTime(totalTime):
     timeInHours=math.floor(totalTime/60)
     timeInMinutes=totalTime-(timeInHours*60)
-    timeFormat="El tiempo total es de: "+str(timeInHours)+" horas con "+str(timeInMinutes)+" minutos"
+    timeFormat="Tiempo total: "+str(timeInHours)+" horas con "+str(timeInMinutes)+" minutos"
     showTimeFormat(timeFormat)
 
 def showTimeFormat(timeFormat):
     label = Label(lgn_frame, text=timeFormat, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
-    label.place(x=200, y=430)
+    label.place(x=260, y=430)
 
 def deleteAirport(ladj_P):
     airport=nodeInput.get().upper()

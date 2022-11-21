@@ -1,127 +1,215 @@
 from tkinter import *
 from tkinter import messagebox
+import heapq as hp
 import graphviz as gv
 from PIL import ImageTk, Image
+import networkx as nx
+import matplotlib.pyplot as plt
+import math
+import csv
+
 
 graph = gv.Digraph("grafo1")
 path_file = "Short.csv"
 diccionario = {}
-diccionario2 = [None] * 21
-valor_ini = 0
-valor_fin = 0
-ruta = []
-path = []
+diccionario2 = [None]*20
+
+deleteAirportFilter=False
+deleteAristaFilter=False
 
 ladj = [[] for _ in range(21)]
 
+ruta = []
+
+lista_general = []
+nombre_archivo = "Short.csv"
+with open(nombre_archivo, "r") as archivo:
+    lector = csv.reader(archivo, delimiter=",")
+    for fila in lector:
+        partida_iata = fila[0]
+        destino_iata = fila[1]
+        t_hora = fila[2][0:1]
+        t_min = fila[3][0:1]
+        t_total = int(t_hora) * 60 + int(t_min)
+        lista_general.append([partida_iata, destino_iata, t_total])
+
+def Dijkstra(graph, start, final):
+    n = len(graph)
+    visited = [False]*n
+    path = [None]*n
+    cost = [float('inf')]*n
+    cost[start] = 0
+
+    # Cola de Prioridad
+    pq = []
+    pq.append((0,start))
+
+    while pq:
+        c , v = hp.heappop(pq)
+        if not visited[v]:
+            visited[v] = True
+            for u, w in graph[v]:
+                if not visited[u]:
+                    if c + w < cost[u]:
+                        cost[u] = c + w
+                        path[u] = v
+                        hp.heappush(pq,(cost[u],u))
+
+    for i in range(len(path) - 1):
+      if i == final:
+        return cost[i]
+
+def drawG_al(G, path=[]):
+  n = len(G)
+  added = set()
+  for v, u in enumerate(path):
+    if u != -1:
+      graph.edge(diccionario2[u], diccionario2[v], dir="forward", penwidth="2", color="orange")
+      added.add(f"{u},{v}")
+      added.add(f"{v},{u}")
+  for u in range(n):
+    for i in G[u]:
+      v = i[0]
+      if not f"{u},{v}" in added:
+        added.add(f"{u},{v}")
+        added.add(f"{v},{u}")
+        graph.edge(diccionario2[u], diccionario2[v], str(i[1]))
+  return graph
 
 def bfs_al(G, s):
-    n = len(G)
-    visited = [False] * n
-    path = [-1] * n  # parent
-    queue = [s]
-    visited[s] = True
+  n = len(G)
+  visited = [False]*n
+  path = [-1]*n # parent
+  queue = [s]
+  visited[s] = True
 
-    while queue:
-        u = queue.pop(0)
-        for v in G[u]:
-            if not visited[v]:
-                visited[v] = True
-                path[v] = u
-                queue.append(v)
-    return path
+  while queue:
+    u = queue.pop(0)
+    for i in G[u]:
+      v = i[0]
+      if not visited[v]:
+        visited[v] = True
+        path[v] = u
+        queue.append(v)
+  return path
 
+def borrar_aeropuerto(lista, a):
+    print("AEROPUERTO:",a)
+    print(lista)
+    ind = diccionario[a]
+    lista[ind] = []
+    print(lista)
+    return print("Se borro el aeropuerto")
+
+def borrar_arista(balde, origen, destino):
+  ori = diccionario[origen]
+  dest = diccionario[destino]
+  print("ori",ori)
+  print("dest",dest)
+
+
+  lista = balde[ori]
+  print("list",lista)
+
+  if len(lista) == 1:
+    balde[ori].pop(0)
+  else:
+    for i in range(len(lista) - 1):
+      tupla = lista[i]
+      print("for")
+      if dest == tupla[0]:
+        balde[ori].pop(i)
+        #print("Se borro la arista con origen en {} y destino en {}".format(diccionario2[ori], diccionario2[dest]))
+        print("if")
+
+def horasMin(h):
+  h = int(h)
+  return 60*h
+
+def escala(pos, path,firstIATA,secondIATA):
+  valor_ini = diccionario[str(firstIATA)]
+  valor_fin = diccionario[str(secondIATA)]
+  if path[valor_fin] == -1:
+    return []
+
+  if pos == valor_ini:
+    print("Y la ruta ES")
+    print(path)
+    return ruta
+
+  ruta.append(diccionario2[path[pos]])
+  return escala(path[pos], path,firstIATA,secondIATA)
 
 def read_file(archivo):
-    cont = 0
-    with open(archivo, "r") as archivo:
-        for linea in archivo:
-            linea = linea.rstrip()
-            separador = ","
-            lista = linea.split(",")
+  cont = 0
+  cont2 = 0
+  with open(archivo, "r") as archivo:
+    for linea in archivo:
+      linea = linea.rstrip()
+      separador = ","
+      lista = linea.split(",")
 
-            salida = lista[0]
-            destino = lista[1]
+      #Recojo de datos
+      salida = lista[0]
+      destino = lista[1]
+      fhora = lista[2]
+      fmin = lista[3]
 
-            # Validacion de diccionario (salida)
-            if salida not in diccionario:
-                diccionario[salida] = cont
-                diccionario2[cont] = salida
-                cont += 1
+      #Validacion de Datos
+      fhora = fhora.split("h")
+      fhora.pop(1)
+      hora = fhora[0]
 
-            # Validacion de diccionario (destino)
-            if destino not in diccionario:
-                diccionario[destino] = cont
-                diccionario2[cont] = destino
-                cont += 1
+      horaMin = horasMin(hora)
 
-            # Creamos una lista de adyacencia
-            ladj[diccionario[salida]].append(diccionario[destino])
+      fmin = fmin.split("m")
+      fmin.pop(1)
+      min = fmin[0]
 
-            # hora = lista[2]
-            # min = lista[3]
-    return ladj
+      #Peso de la arista
+      #val = str(hora) + "h " + str(min) + "m"
+      val = int(horaMin) + int(min)
 
+      #Validacion de diccionario (salida)
+      if salida not in diccionario:
+        diccionario[salida] = cont
+        diccionario2[cont] = salida
+        cont+=1
 
-def escala(valor_ini, pos, path):
-    if pos == valor_ini:
-        return ruta
+      #Validacion de diccionario (destino)
+      if destino not in diccionario:
+        diccionario[destino] = cont
+        diccionario2[cont] = destino
+        cont+=1
 
-    ruta.append(diccionario2[path[pos]])
-    return escala(valor_ini, path[pos], path)
+      #Creamos una lista de adyacencia
+      ladj[diccionario[salida]].append((diccionario[destino], val))
 
+  return ladj
 
-"""root = Tk()
-root.title("Fastest route by plane")
+def agregar_arista(G, u, v, w=1, di=True):
+    G.add_edge(u, v, weight=w)
 
-myFrame = Frame(root, width=100, height=200)
-root.geometry("800x450")
-myFrame.pack()
+    # Si el grafo no es dirigido
+    if not di:
+        # Agrego otra arista en sentido contrario
+        G.add_edge(v, u, weight=w)
 
-title = Label(myFrame, text="Calcule la ruta mas rapida entre aeropuertos", bd=1, font=("Helvetica 12"), justify=CENTER,
-              pady=14)
-title.grid(row=0, column=3)
+def instanciaryañadir(list):
+    G = nx.Graph()
+    for i in range(len(lista_general)):
+        for j in range(len(list)):
+            if (list[j]==lista_general[i][0]) and (lista_general[i][1] in list):
+                agregar_arista(G, lista_general[i][0], lista_general[i][1], lista_general[i][2])
 
-initialIATA = Entry(myFrame)
-initialIATA.grid(row=3, column=1)
-
-finalIATA = Entry(myFrame)
-finalIATA.grid(row=3, column=6)
-
-initialIATALabel = Label(myFrame, text="Origen (IATA) :", pady=20)
-initialIATALabel.grid(row=3, sticky="e", column=0)
-
-finalIATALabel = Label(myFrame, text="Destino (IATA) :")
-finalIATALabel.grid(row=3, sticky="e", column=5)
-
-
-def sendCalculateButton():
-    firstIATA = initialIATA.get()
-    secondIATA = finalIATA.get()
-
-    if len(firstIATA) == 0 or len(secondIATA) == 0:
-        return messagebox.showinfo('Error', 'Campos Incompletos')
-    else:
-        lista = read_file(path_file)
-
-        valor_ini = diccionario[str(firstIATA)]
-        valor_fin = diccionario[str(secondIATA)]
-
-        path = bfs_al(lista, valor_ini)
-
-        ruta_final = escala(valor_ini, valor_fin, path)
-
-        result.set("Ruta: " + str(ruta_final))
-
-sendButton = Button(root, text="Calcular", command=sendCalculateButton)
-sendButton.pack()
-
-result = StringVar()
-
-label = Label(root, textvariable=result)
-label.pack()
-
-root.mainloop()"""
+    # Draw the networks
+    pos = nx.layout.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_size=400, node_color="green", font_size=8, font_color="white",width=2, edge_color="black", alpha=0.9)
+    labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=6)
+    plt.title("Grafo de los AITA")
+    plt.show()
+    return 0
 
 window = Tk()
 window = window
@@ -137,8 +225,28 @@ bg_panel.image = photo
 bg_panel.pack(fill='both', expand='yes')
 
 # ====== Frame =========================
-lgn_frame = Frame(window, bg='#ffffff', width=950, height=600)
-lgn_frame.place(x=200, y=70)
+lgn_frame = Frame(window, bg='#ffffff', width=1200, height=600)
+lgn_frame.place(x=85, y=70)
+
+
+# ==========FILTERS================
+filter_frame = Image.open('images\\filters.png')
+photo = ImageTk.PhotoImage(filter_frame)
+filter_panel = Label(window, image=photo,bg='#ffffff')
+filter_panel.image = photo
+filter_panel.place(x=970, y=100)
+
+nodeInput = Entry(window, highlightthickness=0,relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+nodeInput.place(x=1030, y=264, width=230)
+
+arista1Input = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+arista1Input.place(x=1030, y=434, width=230)
+
+arista2Input = Entry(window, highlightthickness=0, relief=FLAT, bg="#ffffff", fg="#4f4e4d",
+                       font=("yu gothic ui ", 12, "bold"))
+arista2Input.place(x=1030, y=485, width=230)
 
 # ========================================================================
 txt = "CALCULADOR DE RUTA MAS RAPIDA"
@@ -189,12 +297,14 @@ F_icon_label.image = photo
 F_icon_label.place(x=550, y=196)
 
 
+
 # ============================Calculate button================================
+contador=0
+lista=[]
 
 def sendCalculateButton():
     firstIATA = initialIATA.get().upper()
     secondIATA = finalIATA.get().upper()
-
 
     if len(firstIATA) == 0 or len(secondIATA) == 0:
         temporaryRight=True
@@ -206,17 +316,30 @@ def sendCalculateButton():
 
         showStatusIcons(temporaryLeft,temporaryRight)
     else:
-        showStatusIcons(True, True)
-        lista = read_file(path_file)
+        global contador
+        global lista
+        if contador==0:
+           lista = read_file(path_file)
+           contador=contador+1
 
+        showStatusIcons(True, True)
         valor_ini = diccionario[str(firstIATA)]
         valor_fin = diccionario[str(secondIATA)]
 
+        print("SEND",deleteAirportFilter)
+        if deleteAirportFilter:
+            deleteAirport(ladj)
+        if deleteAristaFilter:
+            deleteAristas(ladj)
+
         path = bfs_al(lista, valor_ini)
 
-        ruta_final = escala(valor_ini, valor_fin, path)
-
+        ruta_final = escala(valor_fin, path,firstIATA,secondIATA)
         showDisplayableRute(ruta_final,secondIATA)
+        showDisplayableRuteTime(Dijkstra(ladj,valor_ini,valor_fin))
+        ruta_final.append(secondIATA)
+
+        #instanciaryañadir(ruta_final)
         ruta.clear()
 
 def showDisplayableRute(ruta_final_p,destination_airport):
@@ -228,18 +351,46 @@ def showDisplayableRute(ruta_final_p,destination_airport):
     for i in rutespath:
         routesresut=routesresut+" "+i+" "
     routesresut=routesresut+" "+ destination_airport
+    print("-",routesresut)
     showAirplane(routesresut)
-    return routesresut
 def showAirplane(routesresut_p):
-
     escala_frame = Image.open('images\\airplane.png')
     photo = ImageTk.PhotoImage(escala_frame)
     airplane_icon_label = Label(lgn_frame, image=photo, bg='#ffffff')
     airplane_icon_label.image = photo
-    airplane_icon_label.place(x=550, y=380)
+    airplane_icon_label.place(x=600, y=450)
     label = Label(lgn_frame, text=routesresut_p, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
     label.place(x=300, y=380)
 
+
+def showDisplayableRuteTime(totalTime):
+    timeInHours=math.floor(totalTime/60)
+    timeInMinutes=totalTime-(timeInHours*60)
+    timeFormat="El tiempo total es de: "+str(timeInHours)+" horas con "+str(timeInMinutes)+" minutos"
+    showTimeFormat(timeFormat)
+
+def showTimeFormat(timeFormat):
+    label = Label(lgn_frame, text=timeFormat, font=('yu gothic ui', 20, "bold"), bg="#ffffff", fg='black', bd=0, relief=FLAT)
+    label.place(x=200, y=430)
+
+def deleteAirport(ladj_P):
+    airport=nodeInput.get().upper()
+    borrar_aeropuerto(ladj_P,str(airport) )
+    return 0
+
+def deleteAristas(ladj_P):
+    firstArista=arista1Input.get().upper()
+    secondArista=arista2Input.get().upper()
+    borrar_arista(ladj_P,str(firstArista),str(secondArista))
+    return 0
+
+def EnableAirportFilter():
+    global deleteAirportFilter
+    deleteAirportFilter=True
+
+def EnableAristasFilter():
+    global deleteAristaFilter
+    deleteAristaFilter=True
 
 _button = Image.open('images\\btn1.png')
 photo = ImageTk.PhotoImage(_button)
@@ -250,7 +401,14 @@ calc_Button = Button(_button_label, text='CALCULAR', command=sendCalculateButton
                bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
 calc_Button.place(x=10, y=10)
 
+#======================FILTERS BUTTONS ================
+deleteNode_Button = Button(window, text='ELIMINAR', command=EnableAirportFilter,  font=("yu gothic ui", 13, "bold"), width=21, bd=0,
+               bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
+deleteNode_Button.place(x=1030, y=311)
 
+deleteArista_Button = Button(window, text='ELIMINAR', command=EnableAristasFilter,  font=("yu gothic ui", 13, "bold"), width=21, bd=0,
+               bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white')
+deleteArista_Button.place(x=1030, y=541)
 
 # ========= Validate IATA ==================================================================
 
